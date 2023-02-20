@@ -1,22 +1,22 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import COLORS from '../const/colors'
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native'
 import { Button } from 'react-native-paper';
-import { useAuthStore } from '../hooks/useAuthStore';
 
-export default function LoginScreen() {
 
+export default function RegisterScreen() {
+
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const { startLogin } = useAuthStore();
-
     const navigate = useNavigation();
 
-    const onLogin = () => {
-        startLogin({ email, password })
-        navigate.navigate("home");
+    const onRegister = () => {
+        console.log('Register');
     }
 
     return (
@@ -28,18 +28,35 @@ export default function LoginScreen() {
                 justifyContent: 'center'
             }}
         >
-            <Text style={{ fontSize: 24, margin: 20, color: COLORS.primary, fontWeight: 'bold' }}>Iniciar Sesión</Text>
-            <View style={{ width: "70%" }}>
 
+            <Text style={{ fontSize: 24, margin: 20, color: COLORS.primary, fontWeight: 'bold' }}>Registrarse</Text>
+
+            <View style={{ width: "70%" }}>
                 <TextInput
                     style={style.input}
-                    placeholder="Email"
+                    placeholder="Nombres"
+                    value={firstName}
+                    onChangeText={setFirstName}
+                />
+                <TextInput
+                    style={style.input}
+                    placeholder="Apellidos"
+                    value={lastName}
+                    onChangeText={setLastName}
+                />
+                <TextInput
+                    style={style.input}
+                    placeholder="Número Celular"
+                    value={phone}
+                    onChangeText={setPhone}
+                />
+                <TextInput
+                    style={style.input}
+                    placeholder="Correo Electrónico"
                     value={email}
                     onChangeText={setEmail}
                 />
-
                 <TextInput
-                    secureTextEntry
                     style={style.input}
                     placeholder="******"
                     value={password}
@@ -47,18 +64,17 @@ export default function LoginScreen() {
                 />
             </View>
 
-
             <Button
-                disabled={!email || !password}
+                disabled={!email || !password || !phone || !firstName || !lastName}
                 style={style.btn}
-                onPress={onLogin}
+                onPress={onRegister}
             >
-                <Text style={{ color: COLORS.white }}>Ingresar</Text>
+                <Text style={{ color: COLORS.white }}>Registrarse</Text>
             </Button>
 
-            <Text style={{ marginTop: 20 }}>¿No tienes una cuenta?</Text>
+            <Text style={{ marginTop: 20 }}>¿Ya tienes una cuenta?</Text>
 
-            <TouchableOpacity onPress={() => navigate.navigate("register")}>
+            <TouchableOpacity onPress={() => navigate.navigate("login")}>
                 <Text
                     style={{
                         color: COLORS.primary,
@@ -66,7 +82,7 @@ export default function LoginScreen() {
                         margin: 20
                     }}
                 >
-                    Registrate.
+                    Inicia Sesión.
                 </Text>
             </TouchableOpacity>
 

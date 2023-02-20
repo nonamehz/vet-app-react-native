@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
-import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2';
 import { vetApi } from '../api';
 import { clearErrorMessage, onChecking, onLogin, onLogout } from '../store/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export const useAuthStore = () => {
@@ -17,12 +18,13 @@ export const useAuthStore = () => {
 
             const { data } = await vetApi.post('/auth/login', { email, password });
 
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('token-init-date', new Date().getTime());
+            await AsyncStorage.setItem('token', data.token);
+            // await AsyncStorage.setItem('token-init-date', new Date().getTime());
             dispatch(onLogin({ name: data.name, uid: data.uid, role: data.role }));
 
         } catch (error) {
-            Swal.fire('Error al Iniciar Sesión', error.response.data?.msg || '---', 'error');
+            // Swal.fire('Error al Iniciar Sesión', error.response.data?.msg || '---', 'error');
+            console.log('Error inicio sesion');
             dispatch(onLogout('Credenciales Incorrectas'));
 
             setTimeout(() => {
@@ -40,13 +42,14 @@ export const useAuthStore = () => {
 
             const { data } = await vetApi.post('/auth/register', { firstName, lastName, email, password, phone });
             console.log(data);
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('token-init-date', new Date().getTime());
+            await AsyncStorage.setItem('token', data.token);
+            // localStorage.setItem('token-init-date', new Date().getTime());
 
             dispatch(onLogin({ name: data.name, uid: data.uid, role: data.role }));
 
         } catch (error) {
-            Swal.fire('Error al Registrarse', error.response.data?.msg || '---', 'error');
+            // Swal.fire('Error al Registrarse', error.response.data?.msg || '---', 'error');
+            console.log('Error al registrarse');
             dispatch(onLogout(error.response.data?.msg || '---'));
 
             setTimeout(() => {
@@ -59,14 +62,14 @@ export const useAuthStore = () => {
 
     const checkAuthToken = async () => {
 
-        const token = localStorage.getItem('token');
+        const token = await AsyncStorage.getItem('token');
         if (!token) return dispatch(onLogout());
 
         try {
 
             const { data } = await vetApi.get('/auth/renew');
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('token-init-date', new Date().getTime());
+            await AsyncStorage.setItem('token', data.token);
+            // localStorage.setItem('token-init-date', new Date().getTime());
             dispatch(onLogin({ name: data.name, uid: data.uid, role: data.role }));
 
         } catch (error) {
@@ -76,8 +79,8 @@ export const useAuthStore = () => {
 
     }
 
-    const startLogout = () => {
-        localStorage.clear();
+    const startLogout = async () => {
+        await AsyncStorage.clear();
         // dispatch(onLogoutCalendar());
         dispatch(onLogout());
     }
